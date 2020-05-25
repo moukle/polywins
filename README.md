@@ -1,7 +1,12 @@
 ![polywins](screenshots/polywins.png)
 ![polywins](screenshots/demonstration.gif)
 
-# Script: polywins
+# Script: polywins (multihead branch)
+
+**Currently this only works on setups where the active workspace is the same across all monitors. If you know a WM-agnostic way to identify the active workspace *per-monitor*, let me know and I will update the script.**
+
+**In order for it to work, you must add `monitor = ${env:MONITOR}` to each of your bars' settings, and must run each bar specifying the MONITOR variable, e.g. `MONITOR=HDMI-0 polybar -r myBar`.**
+
 A [Polybar](https://github.com/jaagr/polybar) script forked from [polybar-windows](https://github.com/aroma1994/polybar-windows) with additional features.
 * Left click: Focus window and raise it if it is minimized. If the window is already focused, minimize it.
 * Middle click: Close the window.
