@@ -10,7 +10,7 @@ inactive_text_color="#250F0B"
 inactive_underline="false"
 inactive_underline_color="#F1EF7D"
 separator="·"
-display="window_class" # options: window_title, window_class, window_classname
+show="window_class" # options: window_title, window_class, window_classname
 char_limit=20 # useful with window_title
 char_case="normal" # options: normal, upper, lower
 add_spaces="true"
@@ -20,6 +20,14 @@ wm_border_width=0 # setting this might be required for accurate resize position
 # --- }}}
 
 
+
+# Multi-monitor setup
+read monitor_width monitor_height monitor_x monitor_y <<EOF
+	$(xrandr --query |
+	awk -v m=$MONITOR -F'[ x+]' '{if ($1 ~ m) {print $3" "$4" "$5" "$6}}')
+EOF
+monitor_x_right=$(($monitor_x+$monitor_width))
+monitor_y_bottom=$(($monitor_y+$monitor_height))
 
 # Setup
 actv_win_left="%{F$active_text_color}"
@@ -76,35 +84,47 @@ if [ -n "$2" ]; then exit; fi
 
 
 # Generating the window list
-window_list=$(wmctrl -lx | awk -vORS="" -vOFS="" \
+window_list=$(wmctrl -lxG | awk -vORS="" -vOFS="" \
+	\
 	-v active_workspace="$active_workspace" \
 	-v active_window="$active_window" \
+	\
 	-v active_left="$actv_win_left" \
 	-v active_right="$actv_win_right" \
 	-v inactive_left="$inactv_win_left" \
 	-v inactive_right="$inactv_win_right" \
+	\
 	-v separator="$separator" \
-	-v display="$display" \
+	-v show="$show" \
 	-v c_case="$char_case" \
 	-v char_limit="$char_limit" \
 	-v add_spaces="$add_spaces" \
 	-v on_click="$0" \
+	\
+	-v monitor_x="$monitor_x" \
+	-v monitor_y="$monitor_y" \
+	-v monitor_x_right="$monitor_x_right" \
+	-v monitor_y_bottom="$monitor_y_bottom" \
+	\
 	'{
 	if ($2 != active_workspace && $2 != "-1") { next }
-	if ($3 ~ "polybar" || $3 ~ "yad") { next }
+	if ($7 ~ "polybar" || $7 ~ "yad") { next }
 
-	if (display == "window_class") {
-		lastitem=split($3,classname_and_class,".")
+	if ($3 < monitor_x || $4 < monitor_y) { next }
+	if ($3 > monitor_x_right || $4 > monitor_y_bottom) { next }
+
+	if (show == "window_class") {
+		lastitem=split($7,classname_and_class,".")
 		displayed_name = classname_and_class[lastitem]
 	}
-	else if (display == "window_classname") {
-		split($3,classname_and_class,".")
+	else if (show == "window_classname") {
+		split($7,classname_and_class,".")
 		displayed_name = classname_and_class[1]
 	}
-	else if (display == "window_title") {
+	else if (show == "window_title") {
 		# format window title from wmctrl output
 		title = ""
-		for (i = 5; i <= NF; i++) {
+		for (i = 9; i <= NF; i++) {
 			title = title $i
 			if (i != NF) { title = title " "}
 		}
