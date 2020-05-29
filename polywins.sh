@@ -24,6 +24,7 @@ wm_border_width=0 # setting this might be required for accurate resize position
 # Multi-monitor setup
 read monitor_width monitor_height monitor_x monitor_y <<EOF
 	$(xrandr --query |
+	sed -e 's/ primary//' |
 	awk -v m=$MONITOR -F'[ x+]' '{if ($1 ~ m) {print $3" "$4" "$5" "$6}}')
 EOF
 monitor_x_right=$(($monitor_x+$monitor_width))
