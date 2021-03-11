@@ -1,19 +1,22 @@
 #!/bin/sh
 # POLYWINS
 
+source $HOME/.cache/wal/colors.sh
+
 # SETTINGS {{{ ---
 
-active_text_color="#250F0B"
+active_text_color=$color3
 active_bg=
 active_underline="#ECB3B2"
 
-inactive_text_color="#250F0B"
+inactive_text_color=$foreground
 inactive_bg=
 inactive_underline=
 
-hidden_text_color="#F4DDD8"
+hidden_text_color=$color8
 hidden_bg=
 hidden_underline=
+
 separator="·"
 show="window_class" # options: window_title, window_class, window_classname
 forbidden_classes="Polybar Conky Gmrun"
