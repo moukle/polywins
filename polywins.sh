@@ -53,12 +53,23 @@ main() {
 
 # ON-CLICK FUNCTIONS {{{ ---
 
+# dirty hack, but without retiling there remains an empty spot
+retile_after_hide() {
+       wmctrl -ir "$1" -b toggle,fullscreen
+       wmctrl -ir "$1" -b toggle,fullscreen
+       # bspc node -t fullscreen && bspc node -t tiled
+
+}
+ 
 raise_or_minimize() {
-	if [ "$(get_active_wid)" = "$1" ]; then
-		wmctrl -ir "$1" -b toggle,hidden
-	else
-		wmctrl -ia "$1"
-	fi
+       if [ "$(get_active_wid)" = "$1" ]; then
+               wmctrl -ir "$1" -b toggle,hidden
+       else
+              wmctrl -ia "$1"
+              wmctrl -ir "$1" -b remove,hidden; wmctrl -ia "$1"
+              # wmctrl -ia "$1"
+       fi
+       retile_after_hide "$1"
 }
 
 close() {
