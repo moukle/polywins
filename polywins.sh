@@ -5,27 +5,28 @@ source $HOME/.cache/wal/colors.sh
 
 # SETTINGS {{{ ---
 
-active_text_color=$color3
+active_text_color=$color15
 active_bg=
 active_underline="#ECB3B2"
 
-inactive_text_color=$foreground
+inactive_text_color=$color7
 inactive_bg=
 inactive_underline=
 
-hidden_text_color=$color8
+hidden_text_color=$color0
 hidden_bg=
 hidden_underline=
 
-separator="·"
+separator="   "
 show="window_class" # options: window_title, window_class, window_classname
 forbidden_classes="Polybar Conky Gmrun"
 empty_desktop_message="Desktop"
 
-char_limit=20
+char_limit=200
 max_windows=15
 char_case="normal" # normal, upper, lower
 add_spaces="true"
+add_icon="true"
 resize_increment=16
 wm_border_width=1 # setting this might be required for accurate resize position
 
@@ -58,9 +59,8 @@ retile_after_hide() {
        wmctrl -ir "$1" -b toggle,fullscreen
        wmctrl -ir "$1" -b toggle,fullscreen
        # bspc node -t fullscreen && bspc node -t tiled
-
 }
- 
+
 raise_or_minimize() {
        if [ "$(get_active_wid)" = "$1" ]; then
                wmctrl -ir "$1" -b toggle,hidden
@@ -222,6 +222,13 @@ generate_window_list() {
 		if [ "$add_spaces" = "true" ]; then
 			w_name=" $w_name "
 		fi
+
+		# Name to icon
+		if [ "$add_icon" = "true" ]; then
+			w_name="$(title_to_icon.sh $w_name)"
+			# w_name="$(title_to_icon.sh $w_name) $w_name"
+		fi
+
 
 		# Add left and right formatting to displayed name
 		if [ "$wid" = "$active_wid" ]; then
